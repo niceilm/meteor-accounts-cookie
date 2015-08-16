@@ -2,7 +2,6 @@ var config = null;
 
 Meteor.startup(function() {
   config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
-  console.log(config);
   if(!config) {
     throw new ServiceConfiguration.ConfigError();
   }
@@ -16,13 +15,17 @@ Meteor.startup(function() {
   Accounts.callLoginMethod({
     methodArguments: methodArguments,
     userCallback: function(err) {
-      Accounts._pageLoadLogin({
-        type: "cookie",
-        allowed: !err,
-        error: err,
-        methodName: 'login',
-        methodArguments: methodArguments
-      })
+      if(err) {
+        Accounts.makeClientLoggedOut();
+      } else if(!Accounts._pageLoadLoginAttemptInfo) {
+        Accounts._pageLoadLogin({
+          type: "cookie",
+          allowed: !err,
+          error: err,
+          methodName: 'login',
+          methodArguments: methodArguments
+        });
+      }
     }
   });
 });

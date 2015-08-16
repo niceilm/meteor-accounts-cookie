@@ -19,7 +19,9 @@ Accounts.registerLoginHandler("cookie", function(options) {
     });
   } catch(e) {
     console.log(e);
-    throw new Meteor.Error(403, JSON.stringify(e));
+    return {
+      error: new Meteor.Error(403, "You've been logged out by the server. Please log in again.")
+    };
   }
   var ldapId = response.data.userid;
   response.data.id = ldapId;

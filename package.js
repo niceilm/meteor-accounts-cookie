@@ -1,6 +1,6 @@
 Package.describe({
   name: 'flynn:accounts-cookie',
-  version: '0.0.8',
+  version: '0.0.10',
   // Brief, one-line summary of the package.
   summary: 'A user account for cookie base',
   // URL to the Git repository containing the source code for this package.
