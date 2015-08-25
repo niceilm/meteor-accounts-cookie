@@ -13,7 +13,7 @@ Accounts.registerLoginHandler("cookie", function(options) {
   try {
     response = HTTP.post(config.validationUrl, {
       data: {
-        access_key: config.secret.accessKey,
+        access_key: config.secret,
         cookie: options.cookie
       }
     });
