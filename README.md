@@ -13,4 +13,11 @@ if(Meteor.isServer) {
         }
     );
 }
+
+settings.json
+{
+    "public":{
+        "cookieKey" : "_cookie_key"
+    }
+}
 ```

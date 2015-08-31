@@ -1,12 +1,30 @@
-var config = null;
+Meteor.startup(onStartup);
 
-Meteor.startup(function() {
-  config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
+Meteor.loginWithCookie = function() {
+  if(!Meteor.user()) {
+    var config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
+    if(!config) {
+      throw new ServiceConfiguration.ConfigError();
+    }
+
+    window.location = config.loginUrl;
+  }
+};
+
+Meteor.logoutWithCookie = function() {
+  var config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
   if(!config) {
     throw new ServiceConfiguration.ConfigError();
   }
+  window.location = config.logoutUrl;
+};
 
-  var authCookie = Cookie.get(config.cookieKey);
+function onStartup() {
+  if(!Meteor.settings.public) {
+    throw Error('add public property in settings.json');
+  }
+  var cookieKey = Meteor.settings.public.cookieKey;
+  var authCookie = Cookie.get(cookieKey);
   if(!authCookie) {
     return;
   }
@@ -16,8 +34,9 @@ Meteor.startup(function() {
     methodArguments: methodArguments,
     userCallback: function(err) {
       if(err) {
-        Accounts.makeClientLoggedOut();
-      } else if(!Accounts._pageLoadLoginAttemptInfo) {
+        console.log(err);
+        Meteor.logout();
+      } else if(!Meteor.user()) {
         Accounts._pageLoadLogin({
           type: "cookie",
           allowed: !err,
@@ -28,14 +47,4 @@ Meteor.startup(function() {
       }
     }
   });
-});
-
-Meteor.loginWithCookie = function() {
-  if(!Meteor.user()) {
-    window.location = config.loginUrl;
-  }
-};
-
-Meteor.logoutWithCookie = function() {
-  window.location = config.logoutUrl;
-};
+}
