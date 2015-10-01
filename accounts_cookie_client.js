@@ -1,50 +1,43 @@
+var config = Meteor.settings.public.cookie;
+if(!config) {
+  throw new Meteor.Error("add public cookie property in settings.json");
+}
 Meteor.startup(onStartup);
 
-Meteor.loginWithCookie = function() {
+Meteor.loginWithCookie = function(returnPath) {
+  check(returnPath, Match.Optional(String));
   if(!Meteor.user()) {
-    var config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
-    if(!config) {
-      throw new ServiceConfiguration.ConfigError();
-    }
-
-    window.location = config.loginUrl;
+    window.location = config.loginUrl + Meteor.absoluteUrl(returnPath || "");
   }
 };
 
-Meteor.logoutWithCookie = function() {
-  var config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
-  if(!config) {
-    throw new ServiceConfiguration.ConfigError();
-  }
-  window.location = config.logoutUrl;
+Meteor.logoutWithCookie = function(returnPath) {
+  check(returnPath, Match.Optional(String));
+  window.location = config.logoutUrl + Meteor.absoluteUrl(returnPath || "");
 };
 
 function onStartup() {
   if(!Meteor.settings.public) {
     throw Error('add public property in settings.json');
   }
-  var cookieKey = Meteor.settings.public.cookieKey;
-  var authCookie = Cookie.get(cookieKey);
+  var authCookie = Cookie.get(config.key);
   if(!authCookie) {
     return;
   }
 
+  var type = "cookie";
+  var methodName = "login";
   var methodArguments = [{cookie: authCookie}];
   Accounts.callLoginMethod({
     methodArguments: methodArguments,
     userCallback: function(err) {
-      if(err) {
-        console.log(err);
-        Meteor.logout();
-      } else if(!Meteor.user()) {
-        Accounts._pageLoadLogin({
-          type: "cookie",
-          allowed: !err,
-          error: err,
-          methodName: 'login',
-          methodArguments: methodArguments
-        });
-      }
+      Accounts._pageLoadLogin({
+        type: type,
+        allowed: !err,
+        error: err,
+        methodName: methodName,
+        methodArguments: methodArguments
+      });
     }
   });
 }

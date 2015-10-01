@@ -1,6 +1,6 @@
 Package.describe({
   name: 'flynn:accounts-cookie',
-  version: '0.0.16',
+  version: '0.0.17',
   // Brief, one-line summary of the package.
   summary: 'A user account for cookie base',
   // URL to the Git repository containing the source code for this package.
@@ -11,12 +11,10 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.1.0.3');
+  api.versionsFrom('1.2.0.2');
   api.use('http', 'server');
   api.use('accounts-base', ['client', 'server']);
   api.imply('accounts-base', ['client', 'server']);
-  api.use('service-configuration', ['client', 'server']);
-  api.imply('service-configuration', ['client', 'server']);
   api.use('chuangbo:cookie@1.1.0', 'client');
 
   api.addFiles('accounts_cookie_server.js', "server");

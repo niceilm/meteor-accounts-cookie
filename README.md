@@ -1,23 +1,18 @@
 cookie base account
-```
-if(Meteor.isServer) {
-    ServiceConfiguration.configurations.upsert(
-        {service: "cookie"},
-        {
-            "service": "cookie",
-            "secret": "some secret key",
-            "cookieKey": "_cookie_key",
-            "validationUrl": "https://sso.domain.com/validation",
-            "loginUrl": "https://sso.domain.com/login?returnUrl=" + Meteor.absoluteUrl(),
-            "logoutUrl": "https://sso.domain.com/logout?returnUrl=" + Meteor.absoluteUrl()
-        }
-    );
-}
 
-settings.json
+**settings.json**
+```
 {
-    "public":{
-        "cookieKey" : "_cookie_key"
+  "cookie": {
+    "secret": "secret key",
+    "validationUrl": "https://sso.domain.com/cookie_validation"
+  },
+  "public": {
+    "cookie": {
+      "key": "cookie_key",
+      "loginUrl": "https://sso.domain.com/login?return_url=",
+      "logoutUrl": "https://sso.domain.com/logout?return_url="
     }
+  }
 }
 ```

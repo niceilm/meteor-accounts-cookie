@@ -3,9 +3,10 @@ Accounts.registerLoginHandler("cookie", function(options) {
     return undefined; // don't handle
   }
 
-  var config = ServiceConfiguration.configurations.findOne({service: 'cookie'});
+
+  var config = Meteor.settings.cookie;
   if(!config) {
-    throw new ServiceConfiguration.ConfigError();
+    throw new Meteor.Error("add cookie settings");
   }
 
   check(options, {cookie: String});
